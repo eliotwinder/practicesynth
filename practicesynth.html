@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<title>Ripper</title>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="practicesynth.js"></script>
+<link href="piano.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+<!-- css and html for this piano copied from Taufik Nurrohman - http://cssdeck.com/labs/hdr8w7oh -->
+    <div id="p-wrapper"> 
+        <ul id="piano">
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div><span class="key"></span></li>
+            <li><div class="anchor key"></div></li>
+            
+		</ul>
+    </div>
+    <br>
+    <div id='synthcontrolpanelwrapper'>
+      <div id='mastercontrol' oscnum='master'>
+        <h2>Master</h2>
+        Octave:<input id='masteroctave' type='range' step='1' min='0' max='1' value='0' data-identifier='masteroctave'></span><br>
+        Volume:<input class='volgain' type="range" min="0" max="1" step="0.1" value=".5" data-gain="gain" data-identifier='mastervolume'><br>
+        Attack: <input class='volattack' type="range" min="0" max="5" step="0.01" value=".03" data-identifier='masterattack'><br>
+        Decay: <input class='voldecay' type="range" min="0" max="5" step="0.01" value=".03" data-identifier='masterdecay'><br>
+        Sustain: <input class='volsustain' type="range" min="0" max="1" step="0.1" value=".5" data-identifier='mastersustain'><br>
+        Release: <input class='volrelease' type="range" min="0" max="5" step="0.01" value=".03"data-identifier='masterrelease'>
+      </div>
+      <div id='controlpaneltemplate'> 
+        <div class='osc' style='display: none'>
+          <h2></h2>
+          Osc on/off:<input type='checkbox' class='onoff' checked='checked' data-identifier='onoff'><br>
+          Octave:<input class='octave' type='range' step='1' min='0' max='1' value='0' data-identifier='octave'></span><br>
+          Transpose:<input class='transpose' type='range' step='1' min='-12' max='12' value='0' data-identifier='transpose'></span><br>
+          Detune:<input class='detune' type='range' step='1' min='-25' max='25' value='0' data-identifier='detune'></span><br>
+          Wave type: <select class='waveform' data-identifier='waveform'>
+            <option value="sine">sine</option>
+            <option value="triangle">triangle</option>
+            <option value="sawtooth">sawtooth</option>
+            <option value="square">square</option>
+          </select><br>
+          Gain:<input class='gain' type="range" min="0" max="1.25" step="0.1" value=".5" data-gain="gain" data-identifier='gain'><br>
+          VolAttack: <input class='volattack' type="range" min="0" max="5" step="0.01" value=".03" data-identifier='attack'><br>
+          VolDecay: <input class='voldecay' type="range" min="0" max="5" step="0.01" value=".03" data-identifier='decay'><br>
+          VolSustain: <input class='volsustain' type="range" min="0" max="1" step="0.1" value=".5" data-identifier='sustain'><br>
+          VolRelease: <input class='volrelease' type="range" min="0" max="5" step="0.01" value=".03" data-identifier='release'><br>
+          <br>
+        </div>
+        <br>
+      </div>
+      <div class='controlpanelwrapper'></div>
+    </div>
+	  <br>
+    <br>
+
+    <!--drum machine-->
+    <section id="sp">
+	    <div class="pad" id="pad1" data-sound="audio/A3.wav"></div>
+	    <div class="pad" id="pad2" data-sound="audio/C3.wav"></div>
+	    <div class="pad" id="pad3" data-sound="audio/F2.wav"></div>
+	    <div class="pad" id="pad4" data-sound="audio/F3.wav"></div>
+    </section>
+    <section id='cp'>
+      <div class="volume" data-pad="pad1">
+        <h3>top left pad</h3>
+        <label for"volume 1">Volume</label>
+        <input type="range" min="0" max="5" step="0.1" value="1" data-control="gain" name="volume1">
+      </div>
+      <div class="volume" data-pad="pad2">
+        <h3>top right pad</h3>
+        <label for"volume 1">Volume</label>
+        <input type="range" min="0" max="5" step="0.1" value="1" data-control="gain" name="volume2">
+      </div>
+      <div class="volume" data-pad="pad3">
+        <h3>bottom right pad</h3>
+        <label for"volume 1">Volume</label>
+        <input type="range" min="0" max="5" step="0.1" value="1" data-control="gain" name="volume3">
+      </div>
+      <div class="volume" data-pad="pad4">
+        <h3>bottom left pad</h3>
+        <label for"volume 1">Volume</label>
+        <input type="range" min="0" max="5" step="0.1" value="1" data-control="gain" name="volume4">
+      </div>
+   </section>
+   </body>
+</html>
