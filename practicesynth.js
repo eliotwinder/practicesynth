@@ -9,11 +9,12 @@ function calculateFrequency(pitch, start){
 
 //variables for local storage
 	var seshInProgress = true;
+	var note = {};
 
 //add synth to the keyboard
 function addSynthProperties(object){
 	//object to hold active oscillators and gain
-	var note = {};
+
 	
 	//envelope functions
 
@@ -31,6 +32,7 @@ function addSynthProperties(object){
 		attribute.linearRampToValueAtTime( parseFloat(sustain*level), time + parseFloat(decay));	  
 	}
 
+	//function adds a gainnode, connects it to output, connects input to it, and adds an ads
 	function addGainADS( input, output, amt, a, d, s ) {
 		//create new gain node
 		var gainNode = context.createGain();
@@ -42,7 +44,18 @@ function addSynthProperties(object){
 		gainNode.gain.value = amt;
 		ads(gainNode.gain, amt, a, d, s);
 
+		//return the gainNode so that it can be retrieved from the notes holder array	
+		return gainNode;
+	}
 
+	//adds release to a given attribute - time = release time
+	function release( attribute, time) {
+		var now = context.currentTime;
+		//cancel already planned event to avoid problems with note repeats
+		attribute.cancelScheduledValues(now);
+
+		//release time
+		attribute.linearRampToValueAtTime( 0 , parseFloat(now) + parseFloat(time));
 	}
 
 	
@@ -67,42 +80,39 @@ function addSynthProperties(object){
 			var masterVolDecay = $ ('#mastercontrol .voldecay');
 			var masterVolSustain = $('#mastercontrol .volsustain');
 			var masterVolRelease = $('#mastercontrol .volrelease'); 
-			
-			//attack decay sustain function 
-			
 
 			if(onoff.prop('checked') == true) {
 				var osc = context.createOscillator();
-			  	//this channel's gain node
-			  	var gainNode = context.createGain();
+
 			  	//pseudo master gain node: this gain node will be the same in all oscillators, mimicking a master channel, but allows us to start a new note
 			  	var gainNodeMaster = context.createGain();
 			  	gainNodeMaster.connect(context.destination);
 			  	
-			  	//keeps track of which oscillators are active
+			  	
+			  	
+			  	//sets waveform based on dropdown
+			  	osc.type = waveform.text();
+
+			  	//frequency is the note + octave for master and octave for this osc
+				osc.frequency.value = calculateFrequency( object.frequencyStep + parseFloat(transpose.val()) + parseFloat(masterOctave.val()*12), 130.81);
+
+			  	//detune for this oscillator
+				osc.detune.value = oscDetune.val();
+
+			  	//create new gainnode that takes input osc, and output master gain node, with ads
+			  	var gainNode = addGainADS(osc, gainNodeMaster, gain.val(), gainAttack.val(), gainDecay.val(), gainSustain.val());
+
+				//start this oscillator	
+				osc.start(0);
+
+				//ADD ALL MODULES HERE - keeps track of variable active oscillators and routing
+			  	
 			  	note[$(this).attr('oscnum')] = {
 			  		osc: osc,
 			  		gainNode: gainNode,
 			  		masterGain: gainNodeMaster
 			  	};
 			  	
-			  	//sets waveform based on dropdown
-			  	osc.type = waveform.text();
-
-
-			  	//create new gainnode that takes input osc, and output master gain node
-			  	addGainADS(osc, gainNodeMaster, gain.val(), gainAttack.val(), gainDecay.val(), gainSustain.val());
-
-			  	osc.connect(gainNode);
-
-				//frequency is the note + octave for master and octave for this osc
-				osc.frequency.value = calculateFrequency( object.frequencyStep + parseFloat(transpose.val()) + parseFloat(masterOctave.val()*12), 130.81);
-
-				//detune for this oscillator
-				osc.detune.value = oscDetune.val();
-
-				//start this oscillator	
-				osc.start(0);
 			}
 		});
 	}		
@@ -112,12 +122,18 @@ function addSynthProperties(object){
 			var el = $(this);
 			var volumeRelease = el.find('.volrelease');
 			var masterRelease = $('#mastercontrol .release');
+			
 			if(note[$(this).attr('oscnum')]){
+				//variables to retrieve from note array that were created in startpiano
 				var osc = note[$(this).attr('oscnum')].osc;	
 				var gainNode = note[$(this).attr('oscnum')].gainNode;
 				var masterGain = note[$(this).attr('oscnum')].masterGain;
-				
-				osc.stop();
+
+				//gainNode release
+				release(gainNode.gain, volumeRelease.val());
+			
+				//remove this property from the note list, cause it's done playing!
+				delete note[$(this).attr('oscnum')];
 			}
 		});
 	}
